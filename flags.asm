@@ -9,43 +9,76 @@
 	int 21H
 %endmacro
 
-; prüfen der Flags und schreiben in flagStatus
-%macro chkflags 0
-	; code here
-%endmacro
-
 ORG 100H
 Section .CODE
 ORG 100H
 
 ; Der Startpunkt des Programms
 start:	
-  ; Anzeige der momentan aktiven Flags muss hier hin 
+  ; Anzeige der momentan aktiven Flags muss hier hin
+	mov cx, 4
+	pushf
+setloop:
+	pop ax
+	push ax
+	mov bx, cx ; benutzte bx als indexregister da cx nicht geht unter dos
+	sub bx, 1
+
+	mov dl, [flagconst+bx] 
+	;not dl ; mach das Gegenteil daraus
+	and al, dl ; maskiere das Flag Bit
+
+	mov ah, 0
+	cmp ah, al ; ist das Flag gesetzt
+	je back
+	jne zero
+	mov ah, '1'
+	mov [bx+flagstatus], ah ; schreibe Fkagstatus
+back:
+	loop setloop ; setzte alle 4 Flags in flagstatus
+	popf
+	jmp main
+	
+zero:
+	mov ah, '0'
+	mov [bx+flagstatus], ah ; schreibe Flagstatus
+	jmp back
+
+ main:
 	print helpText
+	pushf
 	mov AH,08H ; liest Zeichen von Tastatur ohne Bildschirmecho
 	int 21H 
-
 	cmp AL, 42H ; 42 hex ist 'B'
 	je Exit
-  ; example
-	jmp printFlags
-  ; hier müssen noch die anderen Tasten abgefragt werden
-  jmp start
-	
+	cmp AL, 41H
+	je printFlags
+	cmp AL, 5AH
+	je testZero
+	cmp AL, 50H
+	je testParity
+	cmp AL, 53H
+	je testSign
+	cmp AL, 43H
+	je testCarry
+  jmp main
+  
 Exit:
 	print exitmsg
 	mov ah,4CH
 	Int 21H
 
+
+
 ; Ausgabe der Flags binär
 printFlags:
-	; example
+	print flagtext
 	print flagstatus
 	; springe zum start zurück
 	jmp start
 
 ; Veränderung des zero Flags
-testZerro:
+testZero:
 	; Code here
 	jmp start
 
@@ -66,7 +99,9 @@ testSign:
 
 Section .DATA
 	; Das Macro chkflags schreibt den Status der Flags in diese Variable
-	flagstatus db 0,0,0,0,"$"
+	flagtext db "Sign, Zero, Parity, Carry:",10,13,"$"
+	flagstatus db "0000",10,13,"$"
+	flagconst db 100000b, 0100000b, 0000100b, 0000001b
   ; Flag status strings
   NotSeT db "Momentan ist kein Flag gesetzt!",10,13,"$"
 	ZeroSet db "Momentan ist das Zero Flag gesetzt",10,13,"$"
@@ -81,5 +116,5 @@ Section .DATA
 				"Druecken sie C zum testen des Carry Flags",10,13,\
 				"Druecken sie S zum testen des Sign Flags",10,13,\
 				"$"
-	exitmsg db "Programm beendet!",10,13,"$"T
+	exitmsg db "Programm beendet!",10,13,"$"
 
