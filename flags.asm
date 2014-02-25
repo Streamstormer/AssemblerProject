@@ -87,10 +87,6 @@ JE changeCarry1
 changeCarry0
 
 
-<<<<<<< HEAD
-; Veränderung des zero Flags
-testZero:
-=======
 ; Veränderung des zero Flags von 1->0
 changeZero1:
 	; Code here
@@ -98,7 +94,6 @@ changeZero1:
 	
 ;Veränderung des zero Flags von 0->1
 changeZero0:
->>>>>>> 3f3af95dc4c21786bc34eb8d0258afdb95eb9eec
 	; Code here
 	jmp start
 
