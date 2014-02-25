@@ -43,24 +43,54 @@ printFlags:
 	print flagstatus
 	; springe zum start zurück
 	jmp start
+	
+;Check, ob CF gesett oder nicht gesetzt
+checkCF:
+mov bx,3	;integer
+mov ax,'1' 	;ASCII
+pushf
+comp ax,[flagstatus + bx]	;flagstatus ist ASCII, deshalb ax ASCII
+JE changeCarry1
+changeCarry0
 
-; Veränderung des zero Flags
-testZerro:
+
+; Veränderung des zero Flags von 1->0
+changeZero1:
+	; Code here
+	jmp start
+	
+;Veränderung des zero Flags von 0->1
+changeZero0:
 	; Code here
 	jmp start
 
-; Veränderung des Parity Flags
-testParity:
+; Veränderung des Parity Flags von 1->0
+changeParity1:
+	; Code here
+	jmp start
+	
+; Veränderung des Parity Flags von 0->1
+changeParity0:
 	; Code here
 	jmp start
 
-; Veränderung des Carry Flags
-testCarry:
+; Veränderung des Carry Flags von 1->0
+changeCarry1:
+	; Code here
+	jmp start
+	
+; Veränderung des Carry Flags von 0->1
+changeCarry0:
 	; Code here
 	jmp start
 
-; Veränderung des Sign Flags
-testSign:
+; Veränderung des Sign Flags von 1->0
+changeSign1:
+	; Code here
+	jmp start
+	
+; Veränderung des Sign Flags von 0->1
+changeSign0:
 	; Code here
 	jmp start
 
