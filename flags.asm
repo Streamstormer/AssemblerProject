@@ -54,14 +54,14 @@ zero:
 	cmp AL, 41H
 	je printFlags
 	cmp AL, 5AH
-	je testZero
+	je checkZF
 	cmp AL, 50H
-	je testParity
+	je checkPF
 	cmp AL, 53H
-	je testSign
+	je checkSF
 	cmp AL, 43H
-	je testCarry
-  jmp main
+	je checkCF
+	jmp main
   
 Exit:
 	print exitmsg
@@ -79,18 +79,26 @@ printFlags:
 	
 ;Check, ob CF gesett oder nicht gesetzt
 checkCF:
-mov bx,3	;integer
-mov ax,'1' 	;ASCII
-pushf
-comp ax,[flagstatus + bx]	;flagstatus ist ASCII, deshalb ax ASCII
-JE changeCarry1
-changeCarry0
+	mov bx,3	;integer
+	mov ax,'1' 	;ASCII
+	pushf
+	cmp ax,[flagstatus + bx]	;flagstatus ist ASCII, deshalb ax ASCII
+	JE changeCarry1
+	jmp changeCarry0
+
+checkZF:
+	; Code here
+	jmp start
+	
+checkPF:
+	; Code here
+	jmp start
+	
+checkSF:
+	; Code here
+	jmp start
 
 
-<<<<<<< HEAD
-; Veränderung des zero Flags
-testZero:
-=======
 ; Veränderung des zero Flags von 1->0
 changeZero1:
 	; Code here
@@ -98,7 +106,6 @@ changeZero1:
 	
 ;Veränderung des zero Flags von 0->1
 changeZero0:
->>>>>>> 3f3af95dc4c21786bc34eb8d0258afdb95eb9eec
 	; Code here
 	jmp start
 
