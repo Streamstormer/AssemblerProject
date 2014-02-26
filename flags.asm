@@ -98,7 +98,6 @@ checkSF:
 	; Code here
 	jmp start
 
-
 ; Veränderung des zero Flags von 1->0
 changeZero1:
 	; Code here
