@@ -60,7 +60,7 @@ zero:
 	cmp AL, 53H
 	je checkSF
 	cmp AL, 43H
-	je checkCF
+	je changeCF
 	jmp main
   
 Exit:
@@ -77,30 +77,41 @@ printFlags:
 	; springe zum start zurück
 	jmp start
 	
-;Check, ob CF gesett oder nicht gesetzt
-checkCF:
-	mov bx,3	;integer
-	mov ax,'1' 	;ASCII
+;Check, ob Flags gesetzt oder nicht gesetzt sind
+changeCF:
 	pushf
-	cmp ax,[flagstatus + bx]	;flagstatus ist ASCII, deshalb ax ASCII
-	JE changeCarry1
-	jmp changeCarry0
+	cmc
+	popf
+	jmp start
 
 checkZF:
-	; Code here
-	jmp start
+	mov bx, 1
+	mov ax, '1'
+	pushf
+	cmp ax,[flagstatus+bx]
+	JE changeZero0
+	JNE changeZero1
 	
 checkPF:
-	; Code here
-	jmp start
+	mov bx, 2
+	mov ax, '1'
+	pushf
+	cmp ax,[flagstatus+bx]
+	JE changeParity0
+	JNE changeParity1
 	
 checkSF:
-	; Code here
-	jmp start
+	mov bx, 0
+	mov ax, '1'
+	pushf
+	cmp ax,[flagstatus+bx]
+	JE changeSign0
+	JNE changeSign1
 
 ; Veränderung des zero Flags von 1->0
 changeZero1:
-	; Code here
+	;popf ax
+	;and ax,'1111111110111111'
 	jmp start
 	
 ;Veränderung des zero Flags von 0->1
@@ -118,19 +129,6 @@ changeParity0:
 	; Code here
 	jmp start
 
-; Veränderung des Carry Flags von 1->0
-changeCarry1:
-	popf
-	clc	; Code here
-	pushf
-	jmp start
-	
-; Veränderung des Carry Flags von 0->1
-changeCarry0:
-	popf
-	sec	; Code here
-	pushf
-	jmp start
 
 ; Veränderung des Sign Flags von 1->0
 changeSign1:
