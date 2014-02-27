@@ -14,7 +14,7 @@ Section .CODE
 ORG 100H
 
 ; Der Startpunkt des Programms
-start:	
+start:
   ; Anzeige der momentan aktiven Flags muss hier hin
 	mov cx, 4
 	pushf
@@ -120,12 +120,16 @@ changeParity0:
 
 ; Veränderung des Carry Flags von 1->0
 changeCarry1:
-	; Code here
+	popf
+	clc	; Code here
+	pushf
 	jmp start
 	
 ; Veränderung des Carry Flags von 0->1
 changeCarry0:
-	; Code here
+	popf
+	sec	; Code here
+	pushf
 	jmp start
 
 ; Veränderung des Sign Flags von 1->0
