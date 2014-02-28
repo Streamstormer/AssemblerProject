@@ -79,9 +79,8 @@ printFlags:
 	
 ;Check, ob Flags gesetzt oder nicht gesetzt sind
 changeCF:
-	pushf
-	cmc
 	popf
+	cmc
 	jmp start
 
 checkZF:
@@ -110,34 +109,39 @@ checkSF:
 
 ; Veränderung des zero Flags von 1->0
 changeZero1:
-	;popf ax
-	;and ax,'1111111110111111'
+	popf ax
+	and ax ,10111111b
 	jmp start
 	
 ;Veränderung des zero Flags von 0->1
 changeZero0:
-	; Code here
+	popf ax
+	or ax, 01000000b
 	jmp start
 
 ; Veränderung des Parity Flags von 1->0
 changeParity1:
-	; Code here
+	popf ax
+	and ax, 11111011b
 	jmp start
 	
 ; Veränderung des Parity Flags von 0->1
 changeParity0:
-	; Code here
+	popf ax
+	or ax, 00000100b
 	jmp start
 
 
 ; Veränderung des Sign Flags von 1->0
 changeSign1:
-	; Code here
+	popf ax
+	and ax, 01111111b
 	jmp start
 	
 ; Veränderung des Sign Flags von 0->1
 changeSign0:
-	; Code here
+	popf ax
+	or ax, 10000000b
 	jmp start
 
 Section .DATA
