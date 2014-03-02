@@ -30,16 +30,16 @@ setloop:
 	cmp ah, al ; ist das Flag gesetzt
 	je zero
 	mov ah, '1'
-	mov [bx+flagstatus], ah ; schreibe Flagstatus
+	mov [bx+flagstatus], ah ; schreibe Flagstatus '1'
 back:
 	sub cx, 1  ; Abstand zwischen setloop und back > 128. loop kann nicht benutzt werden
 	cmp cx, 0
-	jne setloop ; setzte alle 4 Flags in flagstatus
+	jne setloop ; Springe zum Anfang der loop zurück
 	jmp main
 	
 zero:
 	mov ah, '0'
-	mov [bx+flagstatus], ah ; schreibe Flagstatus
+	mov [bx+flagstatus], ah ; schreibe Flagstatus '0'
 	jmp back
 
  main:
@@ -57,25 +57,25 @@ zero:
 next:
 	mov bl,[flagstatus]
 	mov al, '1'
-	cmp al, bl
+	cmp al, bl  ; Ist das Sign flag gesetzt?
 	jne next0
 	print SignSet
 next0:
 	mov bl,[1+flagstatus]
 	mov al, '1'
-	cmp al, bl
+	cmp al, bl ; Ist das Zero flag gesetzt?
 	jne next1
 	print ZeroSet
 next1:
 	mov bl,[2+flagstatus]
 	mov al, '1'
-	cmp al, bl
+	cmp al, bl ; Ist das Parity flag gesetzt?
 	jne next2
 	print ParitySet
 next2:
 	mov bl,[3+flagstatus]
 	mov al, '1'
-	cmp al, bl ; Ist das Carry flag gesetzt
+	cmp al, bl ; Ist das Carry flag gesetzt?
 	jne next3
 	print CarrySet
 next3:
@@ -87,15 +87,15 @@ next3:
 	int 21H 
 	cmp AL, 42H ; 42 hex ist 'B'
 	je Exit
-	cmp AL, 41H
+	cmp AL, 41H ; 41h -> A
 	je printFlags
-	cmp AL, 5AH
+	cmp AL, 5AH ; 5AH -> Z
 	je checkZF
-	cmp AL, 50H
+	cmp AL, 50H ; 50H -> P
 	je checkPF
-	cmp AL, 53H
+	cmp AL, 53H ; 53H -> S
 	je checkSF
-	cmp AL, 43H
+	cmp AL, 43H ; 43H -> C
 	je changeCF
 	jmp main
   
