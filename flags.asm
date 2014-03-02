@@ -15,13 +15,12 @@ ORG 100H
 
 ; Der Startpunkt des Programms
 start:
-  ; Anzeige der momentan aktiven Flags muss hier hin
-	mov cx, 4
-	pushf
+	mov cx, 4 ; loopcounter für vier flags
+	mov bx, cx ; benutzte bx als indexregister da cx unter dos nicht als indexregister fungieren kann!
+	pushf ; sicher flags
 setloop:
-	pop ax
-	push ax
-	mov bx, cx ; benutzte bx als indexregister da cx nicht geht unter dos
+	pop ax ; hole flags
+	push ax ; sicher die flags 
 	sub bx, 1
 
 	mov dl, [flagconst+bx] 
@@ -33,7 +32,7 @@ setloop:
 	mov ah, '1'
 	mov [bx+flagstatus], ah ; schreibe Flagstatus
 back:
-	sub cx, 1
+	sub cx, 1  ; Abstand zwischen setloop und back > 128. loop kann nicht benutzt werden
 	cmp cx, 0
 	jne setloop ; setzte alle 4 Flags in flagstatus
 	jmp main
@@ -47,13 +46,14 @@ zero:
 	print new 
 	print Striche
 	print flags
+	
 	pop ax
 	push ax
-	and al, [4+flagconst]
-	cmp al, 0
+	and al, [4+flagconst] ; sind überhaupt flags gesetzt?
+	cmp al, 0 
 	jne next
 	print NotSet
-	jmp next3
+	jmp next3  ; Wen nicht brauchen wir die flags auch nicht einzeln prüfen.
 next:
 	mov bl,[flagstatus]
 	mov al, '1'
@@ -75,10 +75,11 @@ next1:
 next2:
 	mov bl,[3+flagstatus]
 	mov al, '1'
-	cmp al, bl
+	cmp al, bl ; Ist das Carry flag gesetzt
 	jne next3
 	print CarrySet
 next3:
+	; Menü
 	print new 
 	print Striche
 	print helpText
@@ -116,7 +117,7 @@ printFlags:
 	popf
 	jmp start
 	
-;Check, ob CF gesetzt oder nicht gesetzt
+; Toogle das Carry Flag
 changeCF:
 	popf
 	cmc
@@ -126,7 +127,7 @@ changeCF:
 	jmp start
 
 checkZF:
-	; Code here
+	; Ist das Zero Flag gestzt
 	mov bl, [1+flagstatus]
 	mov al, '1'
 	cmp al, bl
@@ -134,7 +135,7 @@ checkZF:
 	JNE changeZero0
 	
 checkPF:
-	; Code here
+	; Ist das Parity Flag gesetzt
 	mov bx, [2+flagstatus]
 	mov al, '1'
 	cmp al, bl
@@ -142,7 +143,7 @@ checkPF:
 	JNE changeParity0
 	
 checkSF:
-	; Code here
+	; Ist das Sign Flag gesetzt
 	mov bl,[flagstatus]
 	mov al, '1'
 	cmp al, bl
@@ -151,7 +152,6 @@ checkSF:
 
 ; Veränderung des zero Flags von 1->0
 changeZero1:
-	; Code here
 	pop ax
 	and ax ,10111111b
 	push ax
@@ -163,7 +163,6 @@ changeZero1:
 	
 ;Veränderung des zero Flags von 0->1
 changeZero0:
-	; Code here
 	pop ax
 	or ax, 01000000b
 	push ax
@@ -174,7 +173,6 @@ changeZero0:
 	jmp start
 ; Veränderung des Parity Flags von 1->0
 changeParity1:
-	; Code here
 	pop ax
 	and ax, 11111011b
 	push ax
@@ -186,7 +184,6 @@ changeParity1:
 	
 ; Veränderung des Parity Flags von 0->1
 changeParity0:
-	; Code here
 	pop ax
 	or ax, 00000100b
 	push ax
@@ -199,7 +196,6 @@ changeParity0:
 
 ; Veränderung des Sign Flags von 1->0
 changeSign1:
-	; Code here
 	pop ax
 	and ax, 01111111b
 	push ax
@@ -211,7 +207,6 @@ changeSign1:
 	
 ; Veränderung des Sign Flags von 0->1
 changeSign0:
-	; Code here
 	pop ax
 	or ax, 10000000b
 	push ax
@@ -223,14 +218,13 @@ changeSign0:
 	jmp start
 
 Section .DATA
-	; Das Macro chkflags schreibt den Status der Flags in diese Variable
 	binflags db "Binaere Ausgabe der Flags",10,13,"$"
 	flagtext db "Reihenfolge - Sign, Zero, Parity, Carry:  $"
 	flagstatus db "0000",10,13,"$"
 	flagconst db 10000000b, 01000000b, 0000100b, 0000001b, 11000101b
-    ; Flag status strings
+    	; Flag status strings
 	flags db "Status der Flags:",10,13,"$"
-    NotSet db "Momentan ist kein Flag gesetzt!",10,13,"$"
+	NotSet db "Momentan ist kein Flag gesetzt!",10,13,"$"
 	ZeroSet db "Momentan ist das Zero Flag gesetzt",10,13,"$"
 	ParitySet db "Momentan ist das Parity Flag gesetzt",10,13,"$"
 	CarrySet db "Momentan ist das Carry gesetzt",10,13,"$"
